@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فرم گزارش روزانه تولید</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Vazirmatn',Tahoma,sans-serif;background:#f0faf9;direction:rtl;font-size:12px}
+  .page{background:#fff;max-width:1400px;margin:16px auto;padding:16px;box-shadow:0 2px 14px rgba(0,0,0,0.12);border-radius:8px}
+
+  /* HEADER */
+  .header-table{width:100%;border-collapse:collapse;border:2px solid #0d9d91}
+  .header-table td{padding:8px;border:1px solid #0d9d91;vertical-align:middle}
+  .header-logo{width:120px;text-align:center;background:#fff}
+  .header-logo img{max-width:110px;max-height:70px}
+  .header-title{text-align:center;background:#0d9d91;color:#fff;font-size:16px;font-weight:700;padding:16px 8px!important;white-space:nowrap}
+  .header-code{width:110px;text-align:center;background:#fff;font-size:10px;font-weight:600;color:#333;white-space:nowrap}
+
+  /* INFO BAR */
+  .info-bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px;padding:10px 12px;background:#edfbfa;border:1px solid #9ed8d4;border-radius:6px;align-items:center}
+  .info-group{display:flex;align-items:center;gap:4px}
+  .info-group label{font-weight:600;color:#0d8a7f;white-space:nowrap;font-size:11px}
+  .info-group select,.info-group input{border:1px solid #f9a84d;background:#fff8f0;border-radius:4px;padding:3px 6px;font-family:inherit;font-size:11px;color:#333}
+  .info-group select:focus,.info-group input:focus{outline:none;border-color:#0d9d91}
+
+  /* SAVE BAR */
+  .save-bar{display:flex;align-items:center;gap:8px;padding:5px 12px;background:#f0fdf9;border:1px solid #9ed8d4;border-radius:6px;margin-bottom:10px;font-size:11px;color:#0a7a6e}
+  .save-dot{width:9px;height:9px;border-radius:50%;background:#0d9d91;display:inline-block;transition:background .3s;flex-shrink:0}
+  .save-dot.saving{background:#f9a84d;animation:pulse .6s infinite}
+  .save-dot.error{background:#e05050}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .clear-btn{margin-right:auto;background:none;border:1px solid #f9a84d;color:#c0522a;border-radius:4px;padding:2px 10px;font-family:inherit;font-size:10px;cursor:pointer}
+  .clear-btn:hover{background:#fff3e0}
+
+  /* ENTRY FORM */
+  .entry-card{background:#f7fffe;border:2px solid #0d9d91;border-radius:8px;padding:14px 16px;margin-bottom:14px}
+  .entry-card h3{color:#0d9d91;font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .entry-card h3 span.badge{background:#0d9d91;color:#fff;border-radius:12px;padding:2px 10px;font-size:11px}
+  .entry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:10px}
+  .entry-grid.wide .eg-full{grid-column:1/-1}
+  .eg{display:flex;flex-direction:column;gap:3px}
+  .eg label{font-size:10px;font-weight:600;color:#0a7a6e}
+  .eg select,.eg input,.eg textarea{border:1px solid #f9a84d;background:#fff8f0;border-radius:4px;padding:4px 7px;font-family:inherit;font-size:11px;color:#333;width:100%}
+  .eg select:focus,.eg input:focus,.eg textarea:focus{outline:none;border-color:#0d9d91;background:#fff}
+  .eg input[readonly]{background:#e0f7f4;color:#0a7a6e;font-weight:600;cursor:default;border-color:#9ed8d4}
+  .eg textarea{resize:vertical;min-height:60px}
+  .add-btn{background:#0d9d91;color:#fff;border:none;padding:8px 28px;border-radius:6px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s}
+  .add-btn:hover{background:#0a7a6e}
+  .skip-btn{background:#fff;color:#0d8a7f;border:1px solid #9ed8d4;padding:8px 18px;border-radius:6px;font-family:inherit;font-size:12px;cursor:pointer;margin-right:8px}
+  .skip-btn:hover{background:#edfbfa}
+  .line-info{font-size:11px;color:#0d8a7f;background:#edfbfa;border:1px solid #9ed8d4;border-radius:4px;padding:4px 10px;margin-bottom:8px}
+  .progress-bar-wrap{background:#e0f7f4;border-radius:6px;height:8px;margin-bottom:10px;overflow:hidden}
+  .progress-bar-fill{background:#0d9d91;height:100%;border-radius:6px;transition:width .4s}
+
+  /* RESULTS TABLE */
+  .result-section{margin-top:16px}
+  .result-section h3{color:#0d9d91;font-size:13px;font-weight:700;margin-bottom:8px;border-bottom:2px solid #9ed8d4;padding-bottom:4px}
+  .result-table-wrap{overflow-x:auto;border-radius:6px;border:1px solid #9ed8d4}
+  .result-table{width:100%;border-collapse:collapse;font-size:11px;min-width:900px}
+  .result-table th{background:#0d9d91;color:#fff;padding:6px 5px;text-align:center;border:1px solid #0a7a6e;font-weight:600;white-space:nowrap;position:sticky;top:0;z-index:5}
+  .result-table th.sub{background:#0a8a80}
+  .result-table td{border:1px solid #ddd;padding:4px 5px;vertical-align:top;white-space:pre-wrap;word-break:break-word}
+  .result-table tr:nth-child(even) td{background:#f7fffe}
+  .result-table tr:hover td{background:#edfbfa}
+  .result-table td.line-td{background:#d0f0ee;font-weight:700;color:#0a7a6e;text-align:center;font-size:10px}
+  .result-table td.del-td{text-align:center}
+  .del-row-btn{background:none;border:none;color:#e05050;cursor:pointer;font-size:14px;padding:2px 6px}
+  .del-row-btn:hover{color:#b00}
+
+  /* FOOTER */
+  .footer-section{margin-top:16px;padding:12px;background:#f4fdfc;border:1px solid #9ed8d4;border-radius:6px}
+  .footer-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .footer-group{display:flex;align-items:center;gap:6px}
+  .footer-group label{font-weight:600;color:#0d8a7f;white-space:nowrap;font-size:11px}
+  .footer-group input{border:1px solid #f9a84d;background:#fff8f0;border-radius:4px;padding:4px 8px;font-family:inherit;font-size:11px;min-width:160px}
+  .footer-group input:focus{outline:none;border-color:#0d9d91}
+  .absent-tag{display:inline-flex;align-items:center;gap:5px;background:#fdecea;border:1px solid #f0c4bb;color:#c0392b;border-radius:14px;padding:2px 8px;font-size:11px}
+  .absent-tag button{background:none;border:none;color:#c0392b;cursor:pointer;font-size:13px;line-height:1;padding:0}
+  .confirm-section{margin-top:10px;padding:12px 16px;background:#fff8f0;border:2px solid #f9a84d;border-radius:8px}
+  .confirm-text{font-size:13px;color:#333;margin-bottom:8px;line-height:1.8}
+  .confirm-text strong{color:#0d9d91}
+  .confirm-check{display:flex;align-items:center;gap:10px}
+  .confirm-check input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:#0d9d91}
+  .confirm-check label{font-weight:600;font-size:13px;color:#333;cursor:pointer}
+  .export-btn{display:block;margin:14px auto 0;background:#0d9d91;color:#fff;border:none;padding:10px 40px;font-family:inherit;font-size:14px;font-weight:700;border-radius:8px;cursor:pointer;transition:background .2s}
+  .export-btn:hover{background:#0a7a6e}
+  .export-btn:disabled{background:#aaa;cursor:not-allowed}
+  .rows-count{font-size:11px;color:#0a7a6e;margin-bottom:6px;font-weight:600}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<table class="header-table">
+<tr>
+  <td class="header-logo"><img src="data:image/webp;base64,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" alt="لوگو"></td>
+  <td class="header-title">فرم گزارش روزانه تولید</td>
+  <td class="header-code">کد مدرک:<br>PR-FR-03/01</td>
+</tr>
+</table>
+
+<!-- INFO BAR -->
+<div class="info-bar" style="margin-top:10px">
+  <div class="info-group"><label>تاریخ:</label>
+    <select id="day" style="width:54px">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>7</option>
+      <option>8</option>
+      <option>9</option>
+      <option>10</option>
+      <option>11</option>
+      <option>12</option>
+      <option>13</option>
+      <option>14</option>
+      <option>15</option>
+      <option>16</option>
+      <option>17</option>
+      <option>18</option>
+      <option>19</option>
+      <option>20</option>
+      <option>21</option>
+      <option>22</option>
+      <option>23</option>
+      <option>24</option>
+      <option>25</option>
+      <option>26</option>
+      <option>27</option>
+      <option>28</option>
+      <option>29</option>
+      <option>30</option>
+      <option>31</option>
+    </select>
+    <select id="month" style="width:80px">
+      <option>فروردین</option><option>اردیبهشت</option><option>خرداد</option><option>تیر</option>
+      <option>مرداد</option><option>شهریور</option><option>مهر</option><option>آبان</option>
+      <option>آذر</option><option>دی</option><option>بهمن</option><option>اسفند</option>
+    </select>
+    <select id="year" style="width:68px">
+      <option>1400</option>
+      <option>1401</option>
+      <option>1402</option>
+      <option>1403</option>
+      <option>1404</option>
+      <option>1405</option>
+      <option>1406</option>
+      <option>1407</option>
+      <option>1408</option>
+      <option>1409</option>
+      <option>1410</option>
+      <option>1411</option>
+      <option>1412</option>
+      <option>1413</option>
+      <option>1414</option>
+      <option>1415</option>
+      <option>1416</option>
+      <option>1417</option>
+      <option>1418</option>
+      <option>1419</option>
+      <option>1420</option>
+    </select>
+  </div>
+  <div class="info-group"><label>روز هفته:</label>
+    <select id="weekday" style="width:72px">
+      <option value="">انتخاب</option>
+      <option>شنبه</option><option>یکشنبه</option><option>دوشنبه</option>
+      <option>سه‌شنبه</option><option>چهارشنبه</option><option>پنجشنبه</option><option>جمعه</option>
+    </select>
+  </div>
+  <div class="info-group"><label>نام سرشیفت:</label>
+    <input list="shift-masters" id="shift_master" style="width:160px" placeholder="انتخاب یا تایپ...">
+    <datalist id="shift-masters">
+      <option value="علیرضا بوسعیدی"><option value="محمد اکبری">
+      <option value="محسن عباسی"><option value="امیرحسین شفیع زاده">
+    </datalist>
+  </div>
+  <div class="info-group"><label>زمان شیفت:</label>
+    <select id="shift_time" style="width:80px">
+      <option value="">انتخاب</option>
+      <option value="A">صبح (A)</option>
+      <option value="B">عصر (B)</option>
+      <option value="C">شب (C)</option>
+    </select>
+  </div>
+</div>
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <span class="save-dot" id="saveDot"></span>
+  <span id="saveStatus">آماده برای ورود اطلاعات</span>
+  <button class="clear-btn" onclick="clearAll()">پاک کردن همه اطلاعات</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+
+<!-- ENTRY CARD -->
+<div class="entry-card" id="entryCard">
+  <h3>➕ ورود اطلاعات ردیف جدید — <span class="badge" id="rowBadge">ردیف ۱</span></h3>
+  <div class="entry-grid wide" id="entryGrid">
+    <div class="eg"><label>خط تولید</label><select id="e_line" onchange="onLineChange()"></select></div>
+    <div class="eg"><label>OP</label><select id="e_op"><option value="">انتخاب</option></select></div>
+    <div class="eg"><label>نام دستگاه</label><select id="e_machine" onchange="onMachineChange()"></select></div>
+    <div class="eg"><label>کد دستگاه</label><input type="text" id="e_code" readonly></div>
+    <div class="eg" style="min-width:220px"><label>نام محصول</label><input list="product-dl" id="e_product" placeholder="تایپ یا انتخاب..." oninput="onProductInput()" autocomplete="off"><datalist id="product-dl"></datalist></div>
+    <div class="eg"><label>کد راهکاران</label><input type="text" id="e_pcode" readonly placeholder="خودکار"></div>
+    <div class="eg"><label>نام اپراتور</label><input list="op-dl" id="e_operator" placeholder="انتخاب یا تایپ..." autocomplete="off"><datalist id="op-dl"></datalist></div>
+    <div class="eg"><label>کد شناسایی ردیابی (۷ کاراکتر)</label><input type="text" id="e_tracking" maxlength="7" placeholder="مثلاً AB12345" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7)"></div>
+    <div class="eg"><label>تعداد تولید</label><input type="number" id="e_qty" min="0" placeholder="0"></div>
+    <div class="eg"><label>زمان توقف (دقیقه)</label><input type="number" id="e_downtime" min="0" placeholder="0"></div>
+    <div class="eg eg-full"><label>علت توقف</label><textarea id="e_reason" placeholder="در صورت وجود توقف، علت را شرح دهید..."></textarea></div>
+    <div class="eg"><label>شروع پالت</label><input type="number" id="e_pal_start" min="0" placeholder="0"></div>
+    <div class="eg"><label>پایان پالت</label><input type="number" id="e_pal_end" min="0" placeholder="0"></div>
+  </div>
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+    <label style="display:flex;align-items:center;gap:5px;background:#fff3f0;border:1px solid #f0c4bb;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px;color:#c0392b">
+      <input type="checkbox" id="e_stopped" onchange="onStoppedChange()">
+      خط متوقف است (عدم کارکرد / نبود نیروی انسانی)
+    </label>
+  </div>
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:6px">
+    <button class="add-btn" onclick="addRow()">✅ افزودن به جدول</button>
+    <button class="skip-btn" onclick="skipRow()">⏭ رد کردن این ردیف</button>
+    <span id="entryMsg" style="font-size:11px;color:#e05050;margin-right:8px"></span>
+  </div>
+</div>
+
+<!-- RESULT TABLE -->
+<div class="result-section">
+  <h3>📋 جدول اطلاعات ثبت شده</h3>
+  <div class="rows-count" id="rowsCount">۰ ردیف ثبت شده</div>
+  <div class="result-table-wrap">
+  <table class="result-table">
+    <thead>
+      <tr>
+        <th rowspan="2" style="width:32px">#</th>
+        <th rowspan="2" style="width:80px">خط</th>
+        <th rowspan="2" style="width:80px">OP</th>
+        <th rowspan="2" style="width:90px">نام دستگاه</th>
+        <th rowspan="2" style="width:55px">کد دستگاه</th>
+        <th rowspan="2" style="min-width:180px">نام محصول</th>
+        <th rowspan="2" style="min-width:120px">کد راهکاران</th>
+        <th rowspan="2" style="min-width:110px">نام اپراتور</th>
+        <th rowspan="2" style="width:85px">کد ردیابی</th>
+        <th rowspan="2" style="width:60px">تعداد تولید</th>
+        <th rowspan="2" style="width:65px">توقف (دقیقه)</th>
+        <th rowspan="2" style="min-width:200px">علت توقف</th>
+        <th colspan="2" style="background:#0a8a80">شمارش پالت</th>
+        <th rowspan="2" style="width:38px">ویرایش</th>
+        <th rowspan="2" style="width:38px">حذف</th>
+      </tr>
+      <tr>
+        <th class="sub" style="width:60px">شروع</th>
+        <th class="sub" style="width:60px">پایان</th>
+      </tr>
+    </thead>
+    <tbody id="resultBody"></tbody>
+  </table>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-section">
+  <div class="footer-row">
+    <div class="footer-group"><label>مسئول واحد نت:</label>
+      <input list="net-list" id="net_manager" placeholder="انتخاب یا تایپ..." oninput="scheduleSave()">
+      <datalist id="net-list"><option value="مرتضی صالحی"><option value="امید ایزدی"><option value="محمد قره یالی"></datalist>
+    </div>
+    <div class="footer-group"><label>مسئول کیفیت (بازرس):</label>
+      <input list="quality-list" id="quality_manager" placeholder="انتخاب یا تایپ..." oninput="scheduleSave()">
+      <datalist id="quality-list"><option value="رضا رحمانی"><option value="مهدی بهرامی"><option value="مهدی رشیدی"></datalist>
+    </div>
+    <div class="footer-group"><label>مسئول خدمات:</label>
+      <input list="service-list" id="service_manager" placeholder="انتخاب یا تایپ..." oninput="scheduleSave()">
+      <datalist id="service-list"><option value="شیرزادی مهدی"><option value="خدادادی صادق"><option value="کیانی ابراهیم"></datalist>
+    </div>
+    <div class="footer-group" style="flex:1;min-width:280px;align-items:flex-start">
+      <label style="margin-top:6px">اسامی غایبین / مرخصی استحقاقی:</label>
+      <div style="flex:1;min-width:200px">
+        <div id="absentTags" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:5px"></div>
+        <input list="absent-list" id="absent_input" placeholder="انتخاب یا تایپ نام و Enter..." oninput="filterAbsentList()" onkeydown="onAbsentKeydown(event)" onchange="addAbsent(this.value)" autocomplete="off">
+        <datalist id="absent-list"></datalist>
+      </div>
+    </div>
+  </div>
+  <div class="confirm-section">
+    <div class="confirm-text">
+      اینجانب <strong id="masterNameDisplay">_____________</strong> صحت آمار و مندرجات فرم زیر را تأیید می‌کنم.
+    </div>
+    <div class="confirm-check">
+      <input type="checkbox" id="confirmCheck" onchange="onConfirmChange()">
+      <label for="confirmCheck">تأیید می‌کنم</label>
+    </div>
+  </div>
+  <div class="footer-row" style="margin-top:10px">
+    <div class="footer-group" style="flex:1;min-width:280px">
+      <label>ایمیل گیرنده اصلی:</label>
+      <input type="email" id="email_to" placeholder="example@email.com" oninput="scheduleSave()" style="min-width:200px">
+    </div>
+    <div class="footer-group" style="flex:1;min-width:280px">
+      <label>ایمیل‌های دیگر (با , جدا کنید):</label>
+      <input type="text" id="email_cc" placeholder="email2@example.com, email3@example.com" oninput="scheduleSave()" style="min-width:240px">
+    </div>
+  </div>
+</div>
+
+<div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px">
+<button class="export-btn" id="exportBtn" disabled onclick="exportToExcel()">📊 خروجی اکسل</button>
+<button class="export-btn" id="emailBtn" disabled onclick="sendByEmail()">📧 ارسال به ایمیل</button>
+</div>
+<div style="text-align:center;font-size:10px;color:#999;margin-top:6px">
+  ارسال ایمیل از طریق EmailJS انجام می‌شود.
+</div>
+
+<footer style="text-align:center;padding:18px 10px;margin-top:10px;font-size:11px;color:#999;border-top:1px solid #eee;line-height:1.8">
+  © 2026 Abbas Sadeghi. All Rights Reserved.<br>
+  Designed and Developed by Abbas Sadeghi<br>
+  Email: <a href="mailto:1abbassdgh@gmail.com" style="color:#0a8a80;text-decoration:none">1abbassdgh@gmail.com</a>
+</footer>
+
+</div><!-- end page -->
+
+<script>
+// ═══════════════ EMAILJS CONFIG ═══════════════
+// این سه مقدار را از داشبورد EmailJS خود جایگزین کنید:
+const EMAILJS_PUBLIC_KEY  = 'NUtwXs50If0Kr2iSu';
+const EMAILJS_SERVICE_ID  = 'service_nd4w2ro';
+const EMAILJS_TEMPLATE_ID = 'template_nsazp0r';
+
+if (typeof emailjs !== 'undefined') {
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+}
+
+// ═══════════════ DATA ═══════════════
+const products = [
+  {code:"p01500073",name:"دیسک سالید چرخ جلو مزدا کارا ماشینکاری شده"},
+  {code:"p01500072",name:"دیسک چرخ عقب دنا پلاس توربو ماشینکاری شده"},
+  {code:"p01500069",name:"دیسک هوا خنک زانتیا ماشینکاری شده"},
+  {code:"p01500068",name:"دیسک سالید زانتیا ماشینکاری شده"},
+  {code:"p01500061",name:"دیسک سالید آریو ماشینکاری شده"},
+  {code:"p01500059",name:"دیسک چرخ عقب سالید H30 Cross ماشینکاری شده"},
+  {code:"p01500058",name:"دیسک چرخ جلو هواخنک هیوندای سوناتا ماشینکاری شده"},
+  {code:"p01500057",name:"دیسک چرخ جلو هواخنک نیسان ماکسیما ماشینکاری شده"},
+  {code:"p01500056",name:"دیسک چرخ جلو هواخنک تویوتا کمری ماشینکاری شده"},
+  {code:"p01500055",name:"دیسک چرخ جلو MVM 530 ماشینکاری شده"},
+  {code:"p01500054",name:"کاسه چرخ عقب MVM 315 ماشینکاری شده"},
+  {code:"p01500053",name:"دیسک چرخ جلو هواخنک جک j5 ماشینکاری شده"},
+  {code:"p01500052",name:"دیسک چرخ جلو هواخنک j4 ماشینکاری شده"},
+  {code:"p01500051",name:"دیسک چرخ جلو هواخنک سانتافه ماشینکاری شده"},
+  {code:"p01500050",name:"دیسک چرخ جلو هواخنک مزدا 3 ماشینکاری شده"},
+  {code:"p01500049",name:"دیسک چرخ جلو هواخنک هیوندا آزرا ماشینکاری شده"},
+  {code:"p01500048",name:"دیسک چرخ جلو هواخنک کیا سراتو ماشینکاری شده"},
+  {code:"p01500047",name:"کاسه چرخ عقب برلیانس H200 ماشینکاری شده"},
+  {code:"p01500046",name:"دیسک چرخ عقب سالید برلیانس H300 ماشینکاری شده"},
+  {code:"p01500045",name:"دیسک جلو هواخنک CS 35 چانگان ماشینکاری شده"},
+  {code:"p01500044",name:"دیسک جلو هوا خنک مگان ماشینکاری شده"},
+  {code:"p01500043",name:"دیسک هوا خنک شاهین ماشینکاری شده"},
+  {code:"p01500042",name:"دیسک هواخنک چرخ جلو MVM315 ماشین کاری شده"},
+  {code:"p01500041",name:"دیسک سالید شاهین ماشینکاری شده"},
+  {code:"p01500040",name:"دیسک هواخنک چرخ جلو آریو ماشینکاری شده"},
+  {code:"p01500039",name:"دیسک هواخنک چرخ جلو MVM X33 ماشینکاری شده"},
+  {code:"p01500038",name:"دیسک هواخنک برلیانس سری 300 ماشینکاری شده"},
+  {code:"p01500037",name:"کاسه چرخ پیکان ماشینکاری شده"},
+  {code:"p01700002",name:"بلوک سر سیلندر OM355 ماشینکاری شده"},
+  {code:"p01500030",name:"دیسک هواخنک 4567 ماشینکاری شده"},
+  {code:"p01500029",name:"دیسک سالید2108 ماشینکاری شده"},
+  {code:"p01500028",name:"دیسک هواخنک 1445 ماشینکاری شده"},
+  {code:"p01500027",name:"کاسه چرخ206 ABS ماشینکاری شده"},
+  {code:"p01500026",name:"کاسه چرخ OMC 808 ماشینکاری شده"},
+  {code:"p01500025",name:"کاسه OMC 122 ماشینکاری شده"},
+  {code:"p01500024",name:"کاسه OMC 128 ماشینکاری شده"},
+  {code:"p01500022",name:"دیسک هواخنک 4110 ماشینکاری شده"},
+  {code:"p01500021",name:"دیسک هواخنک 9223 ماشینکاری شده"},
+  {code:"p01500020",name:"کاسه چرخ گازل ماشینکاری شده"},
+  {code:"p01500019",name:"کاسه چرخ جلو نیسان ماشینکاری شده"},
+  {code:"p01500018",name:"دیسک سالید 5656 ماشینکاری شده"},
+  {code:"p01500017",name:"دیسک سالید2121 ماشینکاری شده"},
+  {code:"p01500016",name:"دیسک هواخنک گازل ماشینکاری شده"},
+  {code:"p01500015",name:"دیسک سالید 2101 ماشینکاری شده"},
+  {code:"p01500014",name:"دیسک هواخنک 2112 ماشینکاری شده"},
+  {code:"p01500013",name:"کاسه چرخ 103 OMC ماشینکاری شده"},
+  {code:"p01500012",name:"دیسک هواخنک 4020 ماشینکاری شده"},
+  {code:"p01500011",name:"دیسک هواخنک 8515 ماشینکاری شده"},
+  {code:"p01500010",name:"کاسه چرخ OMC 108 ماشینکاری شده"},
+  {code:"p01500009",name:"کاسه چرخ عقب نیسان ماشینکاری شده"},
+  {code:"p14100016",name:"دیسک هوا خنک 1016 ماشینکاری شده"},
+  {code:"p14100015",name:"دیسک هوا خنک 4151 ماشینکاری شده"},
+  {code:"P13100002",name:"بوش xu7 ماشینکاری شده"},
+  {code:"P14200007",name:"دیسک سالید 2805 ماشینکاری شده"},
+  {code:"P14200006",name:"دیسک سالید 8105 ماشینکاری شده"},
+  {code:"P01800002",name:"منیفولد TU3 ماشینکاری شده"},
+  {code:"P01800001",name:"منیفولد TU5 ماشینکاری شده"},
+  {code:"P14200005",name:"دیسک سالید چرخ عقب پارس ماشینکاری شده"},
+  {code:"P14200004",name:"دیسک سالید پیکان ماشینکاری شده"},
+  {code:"P14200003",name:"دیسک سالید TU5 پژو 206 ماشینکاری شده"},
+  {code:"P14200002",name:"دیسک سالید TU3 پژو 206 ماشینکاری شده"},
+  {code:"P14200001",name:"دیسک سالید پراید ماشینکاری شده"},
+  {code:"P02000001",name:"براکت گیربکس دنا ماشینکاری شده"},
+  {code:"P14100014",name:"دیسک هواخنک 4249 ماشینکاری شده"},
+  {code:"P14100013",name:"دیسک هوا خنک 4294 ماشینکاری شده"},
+  {code:"P14100012",name:"دیسک هواخنک 2586 ماشینکاری شده"},
+  {code:"P14100011",name:"دیسک هواخنک R64 ماشینکاری شده"},
+  {code:"P14100010",name:"دیسک هواخنک 2722 ماشینکاری شده"},
+  {code:"P14100009",name:"دیسک هواخنک دنا پلاس ماشینکاری شده"},
+  {code:"P14100008",name:"دیسک هواخنک نیسان ماشینکاری شده"},
+  {code:"P01500008",name:"کاسه چرخ وانت پراید ماشینکاری شده"},
+  {code:"P01900001",name:"توپی چرخ جلو پراید طرح جدید ماشینکاری شده"},
+  {code:"P01500007",name:"کاسه چرخ L90 ماشینکاری شده"},
+  {code:"P01500006",name:"کاسه چرخ عقب 206 مدل TU3 ماشینکاری شده"},
+  {code:"P14100007",name:"دیسک هوا خنک ماندو ماشینکاری شده"},
+  {code:"P14100006",name:"دیسک هوا خنک L90 ماشینکاری شده"},
+  {code:"P01500005",name:"کاسه چرخ تیبا ماشینکاری شده"},
+  {code:"P01500004",name:"کاسه چرخ پژو 405 ماشینکاری شده"},
+  {code:"P14100005",name:"دیسک هوا خنک پژو 206 ماشینکاری شده"},
+  {code:"P14100004",name:"دیسک هوا خنک روآ ماشینکاری شده"},
+  {code:"P14100003",name:"دیسک هوا خنک ریو ماشینکاری شده"},
+  {code:"P14100002",name:"دیسک هوا خنک تیبا ماشینکاری شده"},
+  {code:"P14100001",name:"دیسک هوا خنک پژو 405 ماشینکاری شده"},
+  {code:"P01500003",name:"کاسه چرخ پراید طرح قدیم ماشینکاری شده"},
+  {code:"P01500002",name:"کاسه چرخ پراید طرح ABS ماشینکاری شده"}
+];
+
+const operators = ["ارحامی شیوا","اکبری محمد","بوسعیدی علیرضا","بیات ریزی مصطفی","جوکار محمدجواد","حیدری مهران","خدادادی داود","خدادادی صابر","دوانی نوید","رجایی جلال","القاصی محمد حسین","رحیمی داود","رشیدی عباس","سفیدی وند امین","سلطانی امین","سلطانی رحمان","شعبانزاده حسین","شفیع زاده امیرحسین","شیرزادی مهدی","محمدی کوروش","طهماسبی رضا","عباسی محسن","علیمردانی میلاد","فتاحی حسین","قاسمی حبیب","قربانی مهدی","رئیسی محمد","کریم پور حسین","کریمی سجاد","کریمی سهیلا","کیانی اصغر","گنجعلی محمد","لک رسول","محمد صالحی علی","فرهادی رضا","مراد بازفتی داود","مرادی میلاد","میرزایی مهراب","نصرالهی مجتبی","نوروزی قاسم","عباسی محمد","عشوری محمد","قاسمی امیرحسین","دانشمند رضا","طالبی رضا","مرادی علیرضا","صالحی سجاد","محمدی حسین","کیانی ابراهیم","خدادادی صادق","هادیان روح اله","رهنما محمد","الهیاری سهیل"];
+
+
+
+// All rows: each is a unique machine entry
+const allRows = [
+  {line:"خط 1",machine:"هانوا 1",code:"CN11",ops:["OP 10","OP 20"]},
+  {line:"خط 1",machine:"هانوا 2",code:"CN12",ops:["OP 10","OP 20"]},
+  {line:"خط 1",machine:"هانوا 3",code:"CN13",ops:["OP 10","OP 20"]},
+  {line:"خط 2",machine:"ACE 1",code:"CN06",ops:["OP 10","OP 20"]},
+  {line:"خط 2",machine:"ACE 2",code:"CN07",ops:["OP 10","OP 20"]},
+  {line:"خط 3",machine:"DOS 1",code:"CN01",ops:["OP 10","OP 20"]},
+  {line:"خط 3",machine:"DOS 2",code:"CN03",ops:["OP 10","OP 20"]},
+  {line:"خط 4",machine:"ACE 3",code:"CN08",ops:["OP 10","OP 20"]},
+  {line:"خط 4",machine:"ACE 4",code:"CN09",ops:["OP 10","OP 20"]},
+  {line:"خط 5",machine:"DOS 3",code:"CN03",ops:["OP 10","OP 20"]},
+  {line:"خط 5",machine:"DOS 4",code:"CN04",ops:["OP 10","OP 20"]},
+  {line:"خط 6",machine:"J.F.",code:"CN10",ops:["OP 10","OP 20"]},
+  {line:"خط 6",machine:"DOS 5",code:"CN05",ops:["OP 10","OP 20"]},
+  {line:"خط سوراخکاری",machine:"تپینگ 1",code:"TP01",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط سوراخکاری",machine:"دریل رادیال 1",code:"DR05",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط سوراخکاری",machine:"تپینگ 2",code:"TP02",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط سوراخکاری",machine:"دریل رادیال 1",code:"DR05",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط سوراخکاری",machine:"PL800",code:"FR01",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط سوراخکاری",machine:"دریل رادیال 2",code:"DR06",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل کاسه پراید",machine:"دریل هکرت 1",code:"DR01",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل کاسه پراید",machine:"دریل رادیال 3",code:"DR07",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل کاسه پراید",machine:"دریل هکرت 2",code:"DR02",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل 405",machine:"دریل سابو",code:"DR10",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل 405",machine:"دریل رادیال 4",code:"DR08",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل دیسک پراید",machine:"دریل هکرت 3",code:"DR03",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل دیسک پراید",machine:"دریل رادیال 5",code:"DR09",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل متفرقه",machine:"دریل هکرت 4",code:"DR04",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل متفرقه",machine:"دریل رادیال 5",code:"DR09",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل دیسک پیکان",machine:"دریل ستونی",code:"DR11",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط دریل دیسک پیکان",machine:"دریل رادیال 5",code:"DR09",ops:["OP 30","OP 40","OP 50"]},
+  {line:"خط بالانس",machine:"بالانس 1",code:"BL01",ops:["OP 50","OP 60"]},
+  {line:"خط بالانس",machine:"بالانس 2",code:"BL02",ops:["OP 50","OP 60"]},
+  {line:"خط بالانس",machine:"سنگ بالانس",code:"SN01",ops:["OP 50","OP 60"]},
+  {line:"خط بالانس",machine:"فرز روسی",code:"FR02",ops:["OP 50","OP 60"]},
+  {line:"خط شابر",machine:"شابر 1",code:"SB01",ops:["OP 60","OP 70"]},
+  {line:"خط شابر",machine:"شابر 2",code:"SB02",ops:["OP 60","OP 70"]},
+  {line:"خط شستشو و رنگ",machine:"شستشو",code:"SH01",ops:["OP 70","OP 80"]},
+  {line:"خط شستشو و رنگ",machine:"رنگ",code:"CB01",ops:["OP 70","OP 80"]},
+  {line:"خط خشن تراش بوش XU7",machine:"رایدر 1",code:"RD01",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"رایدر 2",code:"RD02",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"رایدر 3",code:"RD03",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"تنظیم کار رایدر",code:"—",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"KD2 D",code:"DT04",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"ویلر",code:"CN16",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"KD2 B",code:"DT02",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"C39 A",code:"CN14",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"KD2 C",code:"DT03",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"KD2 E",code:"DT05",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"KD2 A",code:"DT01",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط خشن تراش بوش XU7",machine:"C39 B",code:"CN15",ops:["OP 05A","OP 05B","OP 10A","OP 10B"]},
+  {line:"خط سرسیلندر",machine:"فرز 1",code:"FS01",ops:["OP 10","OP 20"]},
+  {line:"خط سرسیلندر",machine:"فرز 2",code:"FS02",ops:["OP 10","OP 20"]},
+  {line:"خط سرسیلندر",machine:"فرز 3",code:"FS03",ops:["OP 10","OP 20"]}
+];
+const TOTAL = allRows.length; // 52
+
+// ═══════════════ STATE ═══════════════
+let currentIdx = 0;     // which row we're filling
+let tableData  = [];    // saved entries
+let saveTimer  = null;
+const SAVE_KEY = 'pngj_form_v3';
+
+// ═══════════════ INIT ═══════════════
+function init() {
+  // fill product datalist
+  const pdl = document.getElementById('product-dl');
+  pdl.innerHTML = products.map(p=>`<option value="${p.name}">`).join('');
+  // fill operator datalist
+  const odl = document.getElementById('op-dl');
+  odl.innerHTML = operators.map(o=>`<option value="${o}">`).join('');
+  // absentees list
+  refreshAbsentList();
+  // fill line select
+  refreshLineOptions();
+  // listeners for auto-save
+  ['day','month','year','weekday','shift_master','shift_time'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){ el.addEventListener('change',scheduleSave); el.addEventListener('input',()=>{ updateMasterName(); scheduleSave(); }); }
+  });
+  // restore or start fresh
+  restoreData();
+  renderEntryCard();
+  renderTable();
+  updateProgress();
+}
+
+function updateMasterName(){
+  const v=document.getElementById('shift_master').value;
+  document.getElementById('masterNameDisplay').textContent=v||'_____________';
+}
+
+// ═══════════════ ENTRY CARD ═══════════════
+function renderEntryCard() {
+  if (currentIdx >= TOTAL) {
+    document.getElementById('entryCard').style.display='none';
+    return;
+  }
+  // Refresh dropdowns to exclude already-recorded line/machine combos
+  refreshLineOptions();
+  const lineSel = document.getElementById('e_line');
+  if (!lineSel.value) {
+    // all line/machine combos recorded
+    document.getElementById('entryCard').style.display='none';
+    return;
+  }
+  document.getElementById('entryCard').style.display='';
+  document.getElementById('rowBadge').textContent = `ردیف ${currentIdx+1} از ${TOTAL}`;
+  document.getElementById('entryMsg').textContent  = '';
+
+  populateMachineSelect(lineSel.value, null);
+  onMachineChange();
+
+  // Clear editable fields
+  document.getElementById('e_product').value   = '';
+  document.getElementById('e_operator').value  = '';
+  document.getElementById('e_pcode').value     = '';
+  document.getElementById('e_pcode').value     = '';
+  document.getElementById('e_tracking').value  = '';
+  document.getElementById('e_qty').value       = '';
+  document.getElementById('e_downtime').value  = '';
+  document.getElementById('e_reason').value    = '';
+  document.getElementById('e_pal_start').value = '';
+  document.getElementById('e_pal_end').value   = '';
+  document.getElementById('e_stopped').checked = false;
+  onStoppedChange();
+}
+
+function getRecordedKeys() {
+  // Set of "line|machine" already recorded in the table
+  return new Set(tableData.map(d=>`${d.line}|${d.machine}`));
+}
+
+function refreshLineOptions() {
+  const lineSelect = document.getElementById('e_line');
+  const prevValue = lineSelect.value;
+  const recorded = getRecordedKeys();
+  const uniqueLines = [...new Set(allRows.map(r=>r.line))];
+  // a line is shown only if it still has at least one unrecorded machine
+  const availableLines = uniqueLines.filter(l =>
+    allRows.some(r => r.line===l && !recorded.has(`${r.line}|${r.machine}`))
+  );
+  lineSelect.innerHTML = availableLines.map(l=>`<option value="${l}">${l}</option>`).join('');
+  // try to keep previous selection if still available, else pick first available
+  if (availableLines.includes(prevValue)) {
+    lineSelect.value = prevValue;
+  } else if (availableLines.length>0) {
+    lineSelect.value = availableLines[0];
+  }
+}
+
+function populateMachineSelect(line, selectedMachine) {
+  const machineSel = document.getElementById('e_machine');
+  const recorded = getRecordedKeys();
+  let rowsForLine = allRows.filter(r => r.line === line && !recorded.has(`${r.line}|${r.machine}`));
+  // if the currently-selected machine was already recorded (e.g. editing), still show it so it's not lost
+  if (selectedMachine && !rowsForLine.some(r=>r.machine===selectedMachine)) {
+    const sel = allRows.find(r=>r.line===line && r.machine===selectedMachine);
+    if (sel) rowsForLine = [sel, ...rowsForLine];
+  }
+  if (rowsForLine.length===0) {
+    machineSel.innerHTML = '';
+    return;
+  }
+  const hasSelected = rowsForLine.some(r=>r.machine===selectedMachine);
+  machineSel.innerHTML = rowsForLine.map((r,idx)=>`<option value="${r.machine}" ${(r.machine===selectedMachine)||(!hasSelected&&idx===0)?'selected':''}>${r.machine}</option>`).join('');
+}
+
+function onLineChange() {
+  const selected = document.getElementById('e_line').value;
+  populateMachineSelect(selected, null);
+  onMachineChange();
+}
+
+function onMachineChange() {
+  const line = document.getElementById('e_line').value;
+  const machine = document.getElementById('e_machine').value;
+  const match = allRows.find(r => r.line===line && r.machine===machine);
+  if (match) {
+    document.getElementById('e_code').value = match.code;
+    const opSel = document.getElementById('e_op');
+    opSel.innerHTML = `<option value="">انتخاب</option>` + match.ops.map(o=>`<option>${o}</option>`).join('');
+  }
+}
+
+// ═══════════════ ABSENTEES MULTI-SELECT ═══════════════
+let absentList = [];
+
+function refreshAbsentList() {
+  const dl = document.getElementById('absent-list');
+  const available = operators.filter(o=>!absentList.includes(o));
+  dl.innerHTML = available.map(o=>`<option value="${o}">`).join('');
+  renderAbsentTags();
+}
+
+function renderAbsentTags() {
+  const wrap = document.getElementById('absentTags');
+  wrap.innerHTML = absentList.map(name=>`
+    <span class="absent-tag">${name}<button onclick="removeAbsent('${name.replace(/'/g,"\\'")}')" title="حذف">×</button></span>
+  `).join('');
+}
+
+function filterAbsentList() {
+  // datalist already filters by browser; nothing extra needed here
+}
+
+function addAbsent(name) {
+  name = name.trim();
+  if (!name) return;
+  if (!absentList.includes(name)) {
+    absentList.push(name);
+    refreshAbsentList();
+    scheduleSave();
+  }
+  document.getElementById('absent_input').value = '';
+}
+
+function removeAbsent(name) {
+  absentList = absentList.filter(n=>n!==name);
+  refreshAbsentList();
+  scheduleSave();
+}
+
+function onAbsentKeydown(e) {
+  if (e.key==='Enter' || e.key===',') {
+    e.preventDefault();
+    addAbsent(e.target.value);
+  }
+}
+
+function onProductInput() {
+  const val = document.getElementById('e_product').value.trim();
+  const match = products.find(p => p.name === val);
+  document.getElementById('e_pcode').value = match ? match.code : '';
+}
+
+function onStoppedChange() {
+  const stopped = document.getElementById('e_stopped').checked;
+  const ids = ['e_product','e_pcode','e_tracking','e_qty','e_downtime','e_pal_start','e_pal_end'];
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    el.disabled = stopped;
+    if (stopped) el.value = '';
+  });
+  const reasonEl = document.getElementById('e_reason');
+  if (stopped) {
+    if (!reasonEl.value.trim()) reasonEl.value = 'خط متوقف - ';
+    reasonEl.focus();
+  }
+}
+
+function addRow() {
+  const r = allRows[currentIdx];
+  const stopped  = document.getElementById('e_stopped').checked;
+  const op       = document.getElementById('e_op').value;
+  const product  = document.getElementById('e_product').value.trim();
+  const pcode    = document.getElementById('e_pcode').value;
+  const tracking = document.getElementById('e_tracking').value.trim();
+  const qty      = document.getElementById('e_qty').value;
+  const downtime = document.getElementById('e_downtime').value;
+  const reason   = document.getElementById('e_reason').value.trim();
+  const palStart = document.getElementById('e_pal_start').value;
+  const palEnd   = document.getElementById('e_pal_end').value;
+  const operator = document.getElementById('e_operator').value.trim();
+
+  if (stopped) {
+    if (!reason) { setMsg('لطفاً علت توقف خط را شرح دهید'); return; }
+  } else {
+    if (!op)       { setMsg('لطفاً OP را انتخاب کنید'); return; }
+    if (tracking.length !== 7) { setMsg('کد شناسایی ردیابی باید دقیقاً ۷ کاراکتر باشد'); return; }
+  }
+
+  const selLine    = document.getElementById('e_line').value;
+  const selMachine = document.getElementById('e_machine').value;
+  const matchIdx = allRows.findIndex(r=>r.line===selLine && r.machine===selMachine);
+
+  tableData.push({
+    rowNum: tableData.length+1,
+    origIdx: matchIdx>=0 ? matchIdx : currentIdx,
+    line: selLine,
+    machine: selMachine,
+    code: document.getElementById('e_code').value,
+    op: stopped ? '—' : op,
+    operator: stopped ? '—' : operator,
+    product, pcode, tracking,
+    qty: stopped ? 0 : qty,
+    downtime: stopped ? 0 : downtime,
+    reason, palStart: stopped ? 0 : palStart, palEnd: stopped ? 0 : palEnd,
+    stopped
+  });
+  currentIdx++;
+  document.getElementById('e_stopped').checked = false;
+  onStoppedChange();
+  scheduleSave();
+  renderTable();
+  renderEntryCard();
+  updateProgress();
+  if (currentIdx < TOTAL) {
+    document.getElementById('entryCard').scrollIntoView({behavior:'smooth',block:'center'});
+  } else {
+    document.getElementById('resultBody').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+function skipRow() {
+  if (currentIdx >= TOTAL) return;
+  currentIdx++;
+  scheduleSave();
+  renderEntryCard();
+  updateProgress();
+}
+
+function setMsg(m) { document.getElementById('entryMsg').textContent=m; }
+
+function getSortedData() {
+  return [...tableData].sort((a,b)=>(a.origIdx??0)-(b.origIdx??0));
+}
+
+// ═══════════════ TABLE RENDER ═══════════════
+let editingIdx = -1;
+
+function renderTable() {
+  const tbody = document.getElementById('resultBody');
+  if (tableData.length===0) {
+    tbody.innerHTML=`<tr><td colspan="16" style="text-align:center;padding:14px;color:#999">هنوز ردیفی ثبت نشده</td></tr>`;
+    document.getElementById('rowsCount').textContent='۰ ردیف ثبت شده';
+    return;
+  }
+  document.getElementById('rowsCount').textContent=`${tableData.length} ردیف ثبت شده`;
+  const sorted = getSortedData();
+  tbody.innerHTML = sorted.map((d,displayIdx)=>{
+    const i = tableData.indexOf(d); // real index in tableData for actions
+    if (i===editingIdx) return renderEditRow(d,i,displayIdx);
+    return `
+    <tr${d.stopped ? ' style="background:#fdecea"' : ''}>
+      <td style="text-align:center">${displayIdx+1}</td>
+      <td class="line-td">${d.line}${d.stopped ? ' <span style="color:#c0392b;font-size:10px">⛔ متوقف</span>' : ''}</td>
+      <td style="text-align:center">${d.op}</td>
+      <td style="text-align:center">${d.machine}</td>
+      <td style="text-align:center">${d.code}</td>
+      <td>${d.product}</td>
+      <td style="font-size:10px">${d.pcode}</td>
+      <td>${d.operator||''}</td>
+      <td style="text-align:center;font-family:monospace">${d.tracking}</td>
+      <td style="text-align:center">${d.qty}</td>
+      <td style="text-align:center">${d.downtime}</td>
+      <td>${d.reason}</td>
+      <td style="text-align:center">${d.palStart}</td>
+      <td style="text-align:center">${d.palEnd}</td>
+      <td class="del-td"><button class="del-row-btn" onclick="editRow(${i})" title="ویرایش ردیف">✏️</button></td>
+      <td class="del-td">${i===pendingDeleteIdx
+        ? `<button class="del-row-btn" style="color:#e05050;font-size:10px;font-weight:700" onclick="deleteRow(${i})" title="تأیید حذف">حذف؟✔</button> <button class="del-row-btn" onclick="cancelDelete()" title="انصراف">✖</button>`
+        : `<button class="del-row-btn" onclick="deleteRow(${i})" title="حذف ردیف">🗑</button>`}</td>
+    </tr>`;
+  }).join('');
+}
+
+function cancelDelete(){
+  pendingDeleteIdx = -1;
+  renderTable();
+}
+
+function renderEditRow(d,i,displayIdx){
+  const lineOptions = [...new Set(allRows.map(r=>r.line))].map(l=>`<option ${l===d.line?'selected':''}>${l}</option>`).join('');
+  const opRow = allRows.find(r=>r.line===d.line) || {ops:[]};
+  const opOptions = opRow.ops.map(o=>`<option ${o===d.op?'selected':''}>${o}</option>`).join('');
+  return `
+    <tr style="background:#fff8f0">
+      <td style="text-align:center">${displayIdx+1}</td>
+      <td><select id="edit_line_${i}">${lineOptions}</select></td>
+      <td><select id="edit_op_${i}">${opOptions}</select></td>
+      <td><input id="edit_machine_${i}" value="${d.machine}" style="width:80px"></td>
+      <td><input id="edit_code_${i}" value="${d.code}" style="width:55px"></td>
+      <td><input list="product-dl" id="edit_product_${i}" value="${d.product}" style="width:160px" oninput="onEditProductInput(${i})"></td>
+      <td><input id="edit_pcode_${i}" value="${d.pcode}" style="width:110px" readonly></td>
+      <td><input list="op-dl" id="edit_operator_${i}" value="${d.operator||''}" style="width:100px" autocomplete="off"></td>
+      <td><input id="edit_tracking_${i}" value="${d.tracking}" style="width:75px" maxlength="7" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7)"></td>
+      <td><input id="edit_qty_${i}" type="number" value="${d.qty}" style="width:55px"></td>
+      <td><input id="edit_downtime_${i}" type="number" value="${d.downtime}" style="width:55px"></td>
+      <td><textarea id="edit_reason_${i}" style="width:180px;min-height:32px">${d.reason}</textarea></td>
+      <td><input id="edit_palStart_${i}" type="number" value="${d.palStart}" style="width:50px"></td>
+      <td><input id="edit_palEnd_${i}" type="number" value="${d.palEnd}" style="width:50px"></td>
+      <td class="del-td"><button class="del-row-btn" onclick="saveEditRow(${i})" title="ذخیره">💾</button></td>
+      <td class="del-td"><button class="del-row-btn" onclick="cancelEditRow()" title="انصراف">✖</button></td>
+    </tr>`;
+}
+
+function editRow(i){
+  editingIdx = i;
+  pendingDeleteIdx = -1;
+  renderTable();
+}
+
+function cancelEditRow(){
+  editingIdx = -1;
+  renderTable();
+}
+
+function onEditProductInput(i){
+  const val = document.getElementById(`edit_product_${i}`).value.trim();
+  const match = products.find(p => p.name === val);
+  document.getElementById(`edit_pcode_${i}`).value = match ? match.code : '';
+}
+
+function saveEditRow(i){
+  const get = id=>document.getElementById(id).value;
+  const d = tableData[i];
+  const newTracking = get(`edit_tracking_${i}`).trim();
+  if (!d.stopped && newTracking.length !== 7) {
+    alert('کد شناسایی ردیابی باید دقیقاً ۷ کاراکتر باشد');
+    return;
+  }
+  d.line     = get(`edit_line_${i}`);
+  d.op       = get(`edit_op_${i}`);
+  d.machine  = get(`edit_machine_${i}`);
+  d.code     = get(`edit_code_${i}`);
+  d.product  = get(`edit_product_${i}`).trim();
+  d.pcode    = get(`edit_pcode_${i}`);
+  d.operator = get(`edit_operator_${i}`).trim();
+  d.tracking = newTracking;
+  d.qty      = get(`edit_qty_${i}`);
+  d.downtime = get(`edit_downtime_${i}`);
+  d.reason   = get(`edit_reason_${i}`).trim();
+  d.palStart = get(`edit_palStart_${i}`);
+  d.palEnd   = get(`edit_palEnd_${i}`);
+  // If the line was changed, realign origIdx to the new line's position so default order is kept
+  const newLineFirstIdx = allRows.findIndex(r=>r.line===d.line);
+  if (newLineFirstIdx>=0) d.origIdx = newLineFirstIdx;
+  editingIdx = -1;
+  scheduleSave();
+  renderTable();
+  renderEntryCard();
+}
+
+let pendingDeleteIdx = -1;
+
+function deleteRow(i) {
+  if (pendingDeleteIdx !== i) {
+    pendingDeleteIdx = i;
+    renderTable();
+    return;
+  }
+  pendingDeleteIdx = -1;
+  tableData.splice(i,1);
+  tableData.forEach((d,j)=>d.rowNum=j+1);
+  scheduleSave();
+  renderTable();
+  renderEntryCard();
+}
+
+// ═══════════════ PROGRESS ═══════════════
+function updateProgress() {
+  const pct = Math.round((currentIdx/TOTAL)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+}
+
+// ═══════════════ CONFIRM & EXPORT ═══════════════
+function onConfirmChange() {
+  const checked = document.getElementById('confirmCheck').checked;
+  document.getElementById('exportBtn').disabled = !checked;
+  document.getElementById('emailBtn').disabled = !checked;
+  scheduleSave();
+}
+
+const PERSIAN_MONTHS = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+
+function getYYMMDD() {
+  const v = id=>document.getElementById(id)?.value||'';
+  const year  = v('year');
+  const month = v('month');
+  const day   = v('day');
+  const yy = year.length===4 ? year.slice(2) : year;
+  const mmIdx = PERSIAN_MONTHS.indexOf(month);
+  const mm = mmIdx>=0 ? String(mmIdx+1).padStart(2,'0') : '00';
+  const dd = String(day).padStart(2,'0');
+  return `${yy}${mm}${dd}`;
+}
+
+function exportToExcel() {
+  const v = id=>document.getElementById(id)?.value||'';
+  let csv='\uFEFF';
+  csv+=`تاریخ:,${v('year')}/${v('month')}/${v('day')},روز هفته:,${v('weekday')},سرشیفت:,${v('shift_master')},شیفت:,${v('shift_time')}\n`;
+  csv+=`مسئول نت:,${v('net_manager')},مسئول کیفیت:,${v('quality_manager')},مسئول خدمات:,${v('service_manager')}\n`;
+  csv+=`غایبین/مرخصی استحقاقی:,"${absentList.join(', ')}"\n\n`;
+  csv+='ردیف,خط,OP,نام دستگاه,کد دستگاه,نام قطعه,کد راهکاران,نام اپراتور,کد ردیابی,تعداد تولید,توقف(دقیقه),علت توقف,شروع پالت,پایان پالت\n';
+  getSortedData().forEach((d,i)=>{
+    const row=[i+1,d.line,d.op,d.machine,d.code,d.product,d.pcode,d.operator||'',d.tracking,d.qty,d.downtime,d.reason,d.palStart,d.palEnd];
+    csv+=row.map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(',')+'\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  const shiftLetter = (v('shift_time')||'x').toLowerCase();
+  const fname=`${getYYMMDD()}-${shiftLetter}.csv`;
+  a.download=fname;a.click();
+  URL.revokeObjectURL(url);
+}
+
+function sendByEmail() {
+  const v = id=>document.getElementById(id)?.value||'';
+  const email = v('email_to').trim();
+  const cc = v('email_cc').trim();
+  if (!email) { alert('لطفاً ایمیل گیرنده اصلی را وارد کنید'); return; }
+  if (tableData.length===0) { alert('جدول خالی است'); return; }
+
+  // Build a readable plain-text table
+  let body = `فرم گزارش روزانه تولید\n`;
+  body += `تاریخ: ${v('year')}/${v('month')}/${v('day')} | روز هفته: ${v('weekday')}\n`;
+  body += `سرشیفت: ${v('shift_master')} | شیفت: ${v('shift_time')}\n`;
+  body += `مسئول نت: ${v('net_manager')} | مسئول کیفیت: ${v('quality_manager')} | مسئول خدمات: ${v('service_manager')}\n`;
+  body += `غایبین/مرخصی استحقاقی: ${absentList.length? absentList.join('، ') : '—'}\n`;
+  body += `\n`;
+  body += `#\tخط\tOP\tدستگاه\tکد دستگاه\tمحصول\tکد راهکاران\tنام اپراتور\tکد ردیابی\tتولید\tتوقف(دقیقه)\tعلت توقف\tشروع پالت\tپایان پالت\n`;
+  getSortedData().forEach((d,i)=>{
+    body += `${i+1}\t${d.line}\t${d.op}\t${d.machine}\t${d.code}\t${d.product}\t${d.pcode}\t${d.operator||''}\t${d.tracking}\t${d.qty}\t${d.downtime}\t${d.reason}\t${d.palStart}\t${d.palEnd}\n`;
+  });
+
+  const form = document.getElementById('emailForm');
+  const subject = `گزارش روزانه تولید - ${getYYMMDD()}-${(v('shift_time')||'x').toLowerCase()}`;
+
+  if (typeof emailjs === 'undefined') {
+    alert('کتابخانه EmailJS بارگذاری نشد. اتصال اینترنت را بررسی کنید.');
+    return;
+  }
+  if (EMAILJS_PUBLIC_KEY.startsWith('YOUR_') || EMAILJS_SERVICE_ID.startsWith('YOUR_') || EMAILJS_TEMPLATE_ID.startsWith('YOUR_')) {
+    alert('تنظیمات EmailJS کامل نشده است. لطفاً Public Key، Service ID و Template ID را در کد وارد کنید.');
+    return;
+  }
+
+  const btn = document.getElementById('emailBtn');
+  btn.disabled = true;
+  setSaveDot('saving','در حال ارسال ایمیل...');
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    to_email: email,
+    cc_email: cc,
+    subject: subject,
+    message: body
+  }).then(()=>{
+    setSaveDot('saved','ایمیل با موفقیت ارسال شد ✉️');
+    btn.disabled = false;
+  }).catch((err)=>{
+    console.error(err);
+    setSaveDot('error','خطا در ارسال ایمیل');
+    alert('ارسال ایمیل ناموفق بود. جزئیات خطا در کنسول مرورگر موجود است.');
+    btn.disabled = false;
+  });
+}
+
+// ═══════════════ AUTO-SAVE ═══════════════
+function scheduleSave() {
+  setSaveDot('saving','در حال ذخیره...');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(doSave,700);
+}
+
+function doSave() {
+  try {
+    const state={
+      currentIdx,tableData,
+      day:document.getElementById('day')?.value,
+      month:document.getElementById('month')?.value,
+      year:document.getElementById('year')?.value,
+      weekday:document.getElementById('weekday')?.value,
+      shift_master:document.getElementById('shift_master')?.value,
+      shift_time:document.getElementById('shift_time')?.value,
+      net_manager:document.getElementById('net_manager')?.value,
+      quality_manager:document.getElementById('quality_manager')?.value,
+      service_manager:document.getElementById('service_manager')?.value,
+      absentList: absentList,
+      email_to:document.getElementById('email_to')?.value,
+      email_cc:document.getElementById('email_cc')?.value,
+      confirmed:document.getElementById('confirmCheck')?.checked,
+      savedAt:new Date().toLocaleTimeString('fa-IR')
+    };
+    localStorage.setItem(SAVE_KEY,JSON.stringify(state));
+    setSaveDot('saved','ذخیره شد ✓  '+state.savedAt);
+  } catch(e){ setSaveDot('error','خطا در ذخیره!'); }
+}
+
+function restoreData() {
+  try {
+    const raw=localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const s=JSON.parse(raw);
+    currentIdx  = s.currentIdx  || 0;
+    tableData   = s.tableData   || [];
+    const set=(id,v)=>{ const el=document.getElementById(id); if(el&&v!==undefined) el.value=v; };
+    set('day',s.day); set('month',s.month); set('year',s.year);
+    set('weekday',s.weekday); set('shift_master',s.shift_master);
+    set('shift_time',s.shift_time); set('net_manager',s.net_manager);
+    set('quality_manager',s.quality_manager);
+    set('service_manager',s.service_manager);
+    absentList = Array.isArray(s.absentList) ? s.absentList : [];
+    refreshAbsentList();
+    set('email_to',s.email_to);
+    set('email_cc',s.email_cc);
+    if(s.confirmed){ document.getElementById('confirmCheck').checked=true; document.getElementById('exportBtn').disabled=false; document.getElementById('emailBtn').disabled=false; }
+    updateMasterName();
+    setSaveDot('saved','بازیابی شد ✓  ('+s.savedAt+')');
+  } catch(e){ setSaveDot('error','خطا در بازیابی'); }
+}
+
+function clearAll() {
+  if (!confirm('تمام اطلاعات پاک شود؟ این عمل قابل بازگشت نیست.')) return;
+  localStorage.removeItem(SAVE_KEY);
+  location.reload();
+}
+
+function setSaveDot(state,msg){
+  const dot=document.getElementById('saveDot');
+  const txt=document.getElementById('saveStatus');
+  if(dot){ dot.className='save-dot '+state; }
+  if(txt) txt.textContent=msg;
+}
+
+// Auto-save every 90s backup
+setInterval(doSave,90000);
+
+// Start
+init();
+</script>
+</body>
+</html>
