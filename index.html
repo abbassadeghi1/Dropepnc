@@ -938,17 +938,43 @@ function sendByEmail() {
   if (!email) { alert('لطفاً ایمیل گیرنده اصلی را وارد کنید'); return; }
   if (tableData.length===0) { alert('جدول خالی است'); return; }
 
-  // Build a readable plain-text table
+  // Build a plain-text table with aligned columns (monospace, pipe-separated with header rule)
+  const cols = [
+    {h:'#',          w:3,  get:(d,i)=>String(i+1)},
+    {h:'خط',         w:8,  get:d=>d.line + (d.stopped?' ⛔':'')},
+    {h:'OP',         w:7,  get:d=>d.op},
+    {h:'دستگاه',     w:9,  get:d=>d.machine},
+    {h:'کددستگاه',   w:8,  get:d=>d.code},
+    {h:'محصول',      w:24, get:d=>d.product},
+    {h:'کدراهکاران', w:13, get:d=>d.pcode},
+    {h:'اپراتور',    w:13, get:d=>d.operator||''},
+    {h:'کدردیابی',   w:8,  get:d=>d.tracking},
+    {h:'تولید',      w:6,  get:d=>String(d.qty)},
+    {h:'توقف',       w:5,  get:d=>String(d.downtime)},
+    {h:'علتتوقف',    w:22, get:d=>d.reason},
+    {h:'شروعپالت',   w:9,  get:d=>String(d.palStart)},
+    {h:'پایانپالت',  w:9,  get:d=>String(d.palEnd)},
+  ];
+  const pad = (s,w) => {
+    s = String(s??'');
+    if (s.length >= w) return s.slice(0,w);
+    return s + ' '.repeat(w - s.length);
+  };
+  const sep = '+' + cols.map(c=>'-'.repeat(c.w+2)).join('+') + '+';
+
   let body = `فرم گزارش روزانه تولید\n`;
   body += `تاریخ: ${v('year')}/${v('month')}/${v('day')} | روز هفته: ${v('weekday')}\n`;
   body += `سرشیفت: ${v('shift_master')} | شیفت: ${v('shift_time')}\n`;
   body += `مسئول نت: ${v('net_manager')} | مسئول کیفیت: ${v('quality_manager')} | مسئول خدمات: ${v('service_manager')}\n`;
-  body += `غایبین/مرخصی استحقاقی: ${absentList.length? absentList.join('، ') : '—'}\n`;
-  body += `\n`;
-  body += `#\tخط\tOP\tدستگاه\tکد دستگاه\tمحصول\tکد راهکاران\tنام اپراتور\tکد ردیابی\tتولید\tتوقف(دقیقه)\tعلت توقف\tشروع پالت\tپایان پالت\n`;
+  body += `غایبین/مرخصی استحقاقی: ${absentList.length? absentList.join('، ') : '—'}\n\n`;
+
+  body += sep + '\n';
+  body += '|' + cols.map(c=>' '+pad(c.h,c.w)+' ').join('|') + '|\n';
+  body += sep + '\n';
   getSortedData().forEach((d,i)=>{
-    body += `${i+1}\t${d.line}\t${d.op}\t${d.machine}\t${d.code}\t${d.product}\t${d.pcode}\t${d.operator||''}\t${d.tracking}\t${d.qty}\t${d.downtime}\t${d.reason}\t${d.palStart}\t${d.palEnd}\n`;
+    body += '|' + cols.map(c=>' '+pad(c.get(d,i),c.w)+' ').join('|') + '|\n';
   });
+  body += sep + '\n';
 
   const form = document.getElementById('emailForm');
   const subject = `گزارش روزانه تولید - ${getYYMMDD()}-${(v('shift_time')||'x').toLowerCase()}`;
